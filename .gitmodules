@@ -1,0 +1,3 @@
+[submodule "forte"]
+	path = forte
+	url = git@github.com:mskcc/forte.git
