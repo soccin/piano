@@ -6,7 +6,7 @@ OPWD=$PWD
 SDIR="$( cd "$( dirname "$0" )" && pwd )"
 ADIR=$(realpath $SDIR)
 
-PROFILE=neo
+CONFIG=neo
 
 export NXF_SINGULARITY_CACHEDIR=/rtsess01/compute/juno/bic/ROOT/opt/singularity/cachedir_socci
 export TMPDIR=/scratch/socci
@@ -38,9 +38,12 @@ LOG=${PROJECT_ID}_runForte.log
 echo \$RDIR=$(realpath .) >$LOG
 echo \$ODIR=$ODIR >>$LOG
 
-echo nextflow run $ADIR/ -ansi-log false \
-    -profile $PROFILE \
-    --outDir $ODIR \
+nextflow run $ADIR/forte/ -ansi-log false \
+    -profile singularity \
+    -config $ADIR/conf/${CONFIG}.config \
+    --genome GRCh37 \
+    --input $INPUT \
+    --outdir $ODIR \
     >> $LOG 2> ${LOG/.log/.err}
 
 mkdir -p $ODIR/runlog
@@ -58,5 +61,12 @@ PWD: $OPWD
 RDIR: $RDIR
 
 Script: $0 $*
+
+nextflow run $ADIR/forte/ -ansi-log false \
+    -profile singularity \
+    -config $ADIR/conf/${CONFIG}.config \
+    --genome GRCh37 \
+    --input $INPUT \
+    --outdir $ODIR
 
 END_VERSION
