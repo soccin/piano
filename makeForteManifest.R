@@ -1,11 +1,19 @@
+argv=commandArgs(trailing=T)
+
+if(len(argv)!=2) {
+    cat("\n usage: makeForteManifest.R strand mapping.txt\n")
+    cat("    strand: yes/no/reverse\n\n")
+    quit()
+}
+
 suppressPackageStartupMessages(require(tidyverse))
-args=commandArgs(trailing=T)
-strand=args[1]
-mapFile=args[2]
+strand=argv[1]
+mapFile=argv[2]
 
 map=read_tsv(mapFile,col_names=F)
 
 fmap=list()
+projectNo=str_extract(map$X4[1],"/Project_([^/]+)/",group=T)
 
 for(mi in map %>% transpose) {
 
@@ -16,15 +24,12 @@ for(mi in map %>% transpose) {
         cat("\n\nR1,R2 mismatch\n")
     }
 
-    fmap[[len(fmap)+1]]=tibble(sample=mi$X2,strand=strand,fastq_1=R1,fastq_2=R2)
+    SID=paste0("p",projectNo,gsub("^s_","-",mi$X2))
+
+    fmap[[len(fmap)+1]]=tibble(sample=SID,strand=strand,fastq_1=R1,fastq_2=R2)
 
 }
 
 fmap=bind_rows(fmap)
+
 write_csv(fmap,gsub("_sample_mapping.txt","_forte_input.csv",basename(mapFile)))
-
-tumors=fmap %>% mutate(SID=as.numeric(gsub("s_CTCL","",sample))) %>% filter(SID%%2==1) %>% select(-SID)
-normals=fmap %>% mutate(SID=as.numeric(gsub("s_CTCL","",sample))) %>% filter(SID%%2==0) %>% select(-SID)
-
-write_csv(normals,gsub("_sample_mapping.txt","_normals_forte_input.csv",basename(mapFile)))
-write_csv(tumors,gsub("_sample_mapping.txt","_tumors_forte_input.csv",basename(mapFile)))
