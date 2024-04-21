@@ -20,9 +20,9 @@ junctionTbl<-function(dat) {
         select(-Samples,Samples)
 }
 
-halt("BREAK")
+SDIR=Sys.getenv("SDIR")
 
-source("read_cff.R")
+source(file.path(SDIR,"R/read_cff.R"))
 
 #
 #
@@ -33,22 +33,18 @@ if(exists(".INCLUDE") && .INCLUDE) {halt(".INCLUDE")}
 
 require(tidyverse)
 
-
 projNo=grep("Proj_",strsplit(getwd(),"/")[[1]],value=T)
 
-INDIR="output/analysis"
-cffFiles=fs::dir_ls(INDIR) %>%
-    fs::dir_ls(regex="metafusion") %>%
-    fs::dir_ls(regex="\\.final\\.cff")
-
+INDIR="out"
+cffFiles=fs::dir_ls(INDIR,recur=3,regex="analysis/.*/metafusion") %>%
+    fs::dir_ls(regex="\\.final\\.cff$")
 cff0=map(cffFiles,read_cff)
 
-if(file.exists(cc(projNo,"UniqueFusions.oncokb.tsv"))) {
-    # oncokb=read_tsv(cc(projNo,"UniqueFusions.oncokb.tsv"),col_types=cols(.default="c")) %>%
-    #     separate(Tumor_Sample_Barcode,c("sample","FID"),sep=",") %>%
-    #     separate(Fusion,c("reann_gene5_symbol","reann_gene3_symbol"),sep="-")
+oncoKbAnnotatedFile=cc(projNo,"_UniqueFusions.oncokb.tsv")
 
-    oncokb=read_tsv("Proj_14879_B_UniqueFusions.oncokb.tsv",col_types=cols(.default="c")) %>%
+if(file.exists(oncoKbAnnotatedFile)) {
+
+    oncokb=read_tsv(oncoKbAnnotatedFile,col_types=cols(.default="c")) %>%
         filter(GENE_IN_ONCOKB=="True") %>%
         select(Fusion,MUTATION_EFFECT,ONCOGENIC,matches("HIGH")) %>%
         arrange_at(vars(matches("HIGH"))) %>%
@@ -57,17 +53,6 @@ if(file.exists(cc(projNo,"UniqueFusions.oncokb.tsv"))) {
 
 } else {
 
-    oncoTbl=cff0 %>%
-        bind_rows %>%
-        select(sample,FID,reann_gene5_symbol,reann_gene3_symbol) %>%
-        filter(!is.na(reann_gene5_symbol)) %>%
-        filter(!is.na(reann_gene3_symbol)) %>%
-        filter(!grepl("-",reann_gene5_symbol)) %>%
-        filter(!grepl("-",reann_gene3_symbol)) %>%
-        unite(Tumor_Sample_Barcode,sample,FID,sep=",") %>%
-        unite(Fusion,reann_gene5_symbol,reann_gene3_symbol,sep="-")
-
-    write_tsv(oncoTbl,cc(projNo,"UniqueFusions.tsv"))
 
     cat("\n\n")
     cat("Run oncokb-annotator/FusionAnnotator.py (in CMD.oncoKb)\n\n")
@@ -82,6 +67,8 @@ dg=cff1 %>% select(matches("max_|Call")) %>% gather(CountType,Count,-nCallers)
 
 pc1=dg %>% ggplot(aes(Count,fill=CountType)) + theme_light(12) + geom_density(alpha=.2) + scale_x_continuous(trans="log1p",breaks=log1pBreaks) + theme(panel.grid.minor = element_blank()) + scale_fill_brewer(palette="Dark2")
 pc2=dg %>% ggplot(aes(Count,fill=factor(nCallers))) + theme_light(12) + geom_density(alpha=.2) + scale_x_continuous(trans="log1p",breaks=log1pBreaks) + theme(panel.grid.minor = element_blank())
+
+#x11 = function (...) grDevices::x11(...,type='cairo')
 
 pdf(file="qcFusionCounts01.pdf",width=10,height=5.625)
 print(pc1)
@@ -114,7 +101,6 @@ dev.off()
 fusionTagNameTbl=cff1 %>% distinct(FusionTag,Fusion,FusionType,Fusion_effect)
 fusionAnnote=cff1 %>% distinct(Fusion,FusionType,Fusion_effect)
 
-
 qcTbl1=cff1 %>%
     distinct(sample,FusionTag,.keep_all=T) %>%
     filter(Fusion=="SMG1::NPIPB5") %>%
@@ -135,7 +121,8 @@ tbl1=cff1 %>%
         Sample=sample,Fusion,Junction=FusionTag,max_split_cnt,max_span_cnt,
         FusionType,Fusion_effect,Tools,nCallers) %>%
     arrange(Sample,Fusion,Junction) %>%
-    left_join(oncokb)
+    left_join(oncokb) %>%
+    arrange(desc(nCallers),desc(max_split_cnt))
 
 tbl1on=tbl1 %>% filter(!is.na( HIGHEST_LEVEL)) %>% arrange(desc(max_split_cnt))
 
@@ -147,16 +134,30 @@ tbl2=cff1 %>%
     select(
         Sample,Fusion,Junction=FusionTag,max_split_cnt,max_span_cnt,
         FusionType,Fusion_effect,Tools,nCallers) %>%
-    left_join(oncokb)
+    left_join(oncokb) %>%
+    arrange(desc(nCallers),desc(max_split_cnt))
 
-ffile="Proj_14879_B__FusionTableV3.xlsx"
+ffile=cc(projNo,"_FusionTableV3.xlsx")
 tbl=list(allEvents=tbl1,uniqSampleFusion=tbl2)
 openxlsx::write.xlsx(tbl,ffile)
-write_csv(tbl1,"Proj_14879_B__FusionTableV3__allEvents.csv")
+write_csv(tbl1,cc(projNo,"_FusionTableV3__allEvents.csv"))
 
-topFusions=tbl1 %>% filter(FusionType!="SameGene" & FusionType!="ReadThrough") %>% distinct(Fusion,Sample) %>% count(Fusion) %>% arrange(desc(n))
+topFusions3=tbl1 %>%
+    filter(nCallers>2) %>%
+    filter(FusionType!="SameGene" & FusionType!="ReadThrough") %>%
+    distinct(Fusion,Sample) %>%
+    count(Fusion) %>%
+    arrange(desc(n))
 
-topGenes=cff1 %>%
+topFusions2=tbl1 %>%
+    filter(nCallers>1) %>%
+    filter(FusionType!="SameGene" & FusionType!="ReadThrough") %>%
+    distinct(Fusion,Sample) %>%
+    count(Fusion) %>%
+    arrange(desc(n))
+
+topGenes2=cff1 %>%
+    filter(nCallers>1) %>%
     select(Fusion,sample,reann_gene5_symbol,reann_gene3_symbol,FusionType) %>%
     filter(FusionType!="SameGene" & FusionType!="ReadThrough") %>%
     select(-FusionType,-Fusion) %>%
@@ -165,29 +166,19 @@ topGenes=cff1 %>%
     count(Gene) %>%
     arrange(desc(n))
 
-tblE=cff1 %>%
-    select(Fusion,sample,reann_gene5_symbol,reann_gene3_symbol,FusionType,matches("exon|Exon"),matches("max")) %>%
-    filter(FusionType!="SameGene" & FusionType!="ReadThrough" & Fusion!="TIMM23::PARGP1") %>%
-    select(-FusionType) %>%
-    unite(exon5,reann_gene5_symbol,closest_exon5,sep="__") %>%
-    unite(exon3,reann_gene3_symbol,closest_exon3,sep="__")  %>%
-    left_join(topFusions) %>%
-    arrange(desc(n))
-
-
-ffile="Proj_14879_B__TopTableV1.xlsx"
-ttbl=list(topFusions=topFusions,topGenes=topGenes,exonsUsed=tblE)
+ffile=cc(projNo,"_TopTableV1.xlsx")
+ttbl=list(topFusions3Calls=topFusions3,topFusions2Calls=topFusions2,topGenes=topGenes2)
 openxlsx::write.xlsx(ttbl,ffile)
 
-fusions=tbl1 %>% separate(Fusion,c("Gene5p","Gene3p"),sep="::",remove=F)
+# fusions=tbl1 %>% separate(Fusion,c("Gene5p","Gene3p"),sep="::",remove=F)
 
-genes=scan("genesToLookAt","")
+# genes=scan("genesToLookAt","")
 
-testList3=fusions %>% filter(Gene5p %in% genes | Gene3p %in% genes) %>% filter(nCallers>2)
-testList2=fusions %>% filter(Gene5p %in% genes | Gene3p %in% genes) %>% filter(nCallers>1)
+# testList3=fusions %>% filter(Gene5p %in% genes | Gene3p %in% genes) %>% filter(nCallers>2)
+# testList2=fusions %>% filter(Gene5p %in% genes | Gene3p %in% genes) %>% filter(nCallers>1)
 
-write_csv(testList3,"test3FusionsForIntegrate.csv")
-write_csv(testList2,"test2FusionsForIntegrate.csv")
+# write_csv(testList3,"test3FusionsForIntegrate.csv")
+# write_csv(testList2,"test2FusionsForIntegrate.csv")
 
-testList2 %>% distinct(Sample) %>% pull %>% write("samplesToTestPass1")
+# testList2 %>% distinct(Sample) %>% pull %>% write("samplesToTestPass1")
 
