@@ -5,7 +5,7 @@ suppressPackageStartupMessages({
 
 read_cff<-function(cfile) {
 
-    read_tsv(cfile) |>
+    read_tsv(cfile,show_col_types = FALSE,progress=F) |>
         mutate(Fusion=paste0(reann_gene5_symbol,"::",reann_gene3_symbol)) |>
         mutate(FusionTag=paste0(gene5_chr,":",gene5_breakpoint,":",gene5_strand,"::",
                                 gene3_chr,":",gene3_breakpoint,":",gene3_strand))
