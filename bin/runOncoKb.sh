@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -eu
+
 SDIR="$( cd "$( dirname "$0" )" && pwd )"
 
 INPUT=$1
