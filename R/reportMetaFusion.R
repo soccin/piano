@@ -20,6 +20,8 @@ junctionTbl<-function(dat) {
         select(-Samples,Samples)
 }
 
+halt("BREAK")
+
 source("read_cff.R")
 
 #
@@ -30,6 +32,7 @@ if(exists(".INCLUDE") && .INCLUDE) {halt(".INCLUDE")}
 .INCLUDE=T
 
 require(tidyverse)
+
 
 projNo=grep("Proj_",strsplit(getwd(),"/")[[1]],value=T)
 
