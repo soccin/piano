@@ -19,6 +19,13 @@ if [ "$#" -lt "2" ]; then
     exit
 fi
 
+if ! command -v nextflow &> /dev/null
+then
+    echo -e "\n   Need to install nextflow"
+    echo -e "   Read piano/docs/install.md\n"
+    exit 1
+fi
+
 PROJECT_ID=$1
 INPUT=$(realpath $2)
 
