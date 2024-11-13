@@ -70,7 +70,7 @@ RDIR: $RDIR
 Script: $0 $*
 
 nextflow run $ADIR/forte/ -ansi-log false \
-    -profile singularity \
+    -profile juno \
     -config $ADIR/conf/${CONFIG}.config \
     --genome GRCh37 \
     --input $INPUT \
