@@ -46,7 +46,7 @@ echo \$RDIR=$(realpath .) >$LOG
 echo \$ODIR=$ODIR >>$LOG
 
 nextflow run $ADIR/forte/ -ansi-log false \
-    -profile singularity \
+    -profile juno \
     -config $ADIR/conf/${CONFIG}.config \
     --genome GRCh37 \
     --input $INPUT \
