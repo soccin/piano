@@ -9,6 +9,7 @@ ADIR=$(realpath $SDIR)
 CONFIG=neo
 
 export NXF_SINGULARITY_CACHEDIR=/rtsess01/compute/juno/bic/ROOT/opt/singularity/cachedir_socci
+export NXF_OPTS='-Xms1g -Xmx4g'
 export TMPDIR=/scratch/socci
 export PATH=$ADIR/bin:$PATH
 
@@ -45,10 +46,13 @@ LOG=${PROJECT_ID}_runForte.log
 echo \$RDIR=$(realpath .) >$LOG
 echo \$ODIR=$ODIR >>$LOG
 
-nextflow run $ADIR/forte/ -ansi-log false \
+nextflow run $ADIR/forte/ \
+    -ansi-log false -resume \
     -profile juno \
     -config $ADIR/conf/${CONFIG}.config \
     --genome GRCh37 \
+    --cosmic_usr soccin@mskcc.org \
+    --run_oncokb_fusionannotator \
     --input $INPUT \
     --outdir $ODIR \
     >> $LOG 2> ${LOG/.log/.err}
@@ -69,10 +73,13 @@ RDIR: $RDIR
 
 Script: $0 $*
 
-nextflow run $ADIR/forte/ -ansi-log false \
+nextflow run $ADIR/forte/ \
+    -ansi-log false -resume \
     -profile juno \
     -config $ADIR/conf/${CONFIG}.config \
     --genome GRCh37 \
+    --cosmic_usr soccin@mskcc.org \
+    --run_oncokb_fusionannotator \
     --input $INPUT \
     --outdir $ODIR
 
