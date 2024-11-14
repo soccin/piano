@@ -1,0 +1,99 @@
+//
+// Just a stub file for now, placeholders
+//
+
+//
+// Exactly the same has forte/conf/juno.config
+//
+executor {
+    name = "lsf"
+    queueSize = 5000000000
+    perJobMemLimit = true
+}
+
+process {
+    clusterOptions = "-R cmorsc1"
+    withLabel:process_single {
+        cpus   = { check_max( 1, 'cpus' )                                                     }
+        memory = { round_memory( check_max( 9.GB * task.cpus, 'memory' )/task.cpus, "down")   }
+        time   = { check_max( 4.h  * task.attempt, 'time'    )                                }
+    }
+
+    //
+    // From modules.config
+    //
+    // withName: FUSIONCATCHER_DETECT {
+    //     ext.args  = "--skip-blat"
+    //     cpus = { check_max( 8 * task.attempt, 'cpus' ) }
+    // }
+
+}
+
+params {
+
+    // Max resource options
+    // Defaults only, expecting to be overwritten
+    max_memory                 = '1024.GB'
+    max_cpus                   = 128
+    max_time                   = '240.h'
+
+}
+
+// singularity {
+//     // enabled = true
+//     // runOptions = "-B $TMPDIR"
+//     // autoMounts = true
+//     // cacheDir = "/rtsess01/compute/juno/bic/ROOT/opt/singularity/cachedir_socci/"
+// }
+
+//
+// copied from ROOT/nextflow.config
+//
+
+// Function to ensure that resource requirements don't go beyond
+// a maximum limit
+def check_max(obj, type) {
+    if (type == 'memory') {
+        try {
+            if (obj.compareTo(params.max_memory as nextflow.util.MemoryUnit) == 1)
+                return params.max_memory as nextflow.util.MemoryUnit
+            else
+                return obj
+        } catch (all) {
+            println "   ### ERROR ###   Max memory '${params.max_memory}' is not valid! Using default value: $obj"
+            return obj
+        }
+    } else if (type == 'time') {
+        try {
+            if (obj.compareTo(params.max_time as nextflow.util.Duration) == 1)
+                return params.max_time as nextflow.util.Duration
+            else
+                return obj
+        } catch (all) {
+            println "   ### ERROR ###   Max time '${params.max_time}' is not valid! Using default value: $obj"
+            return obj
+        }
+    } else if (type == 'cpus') {
+        try {
+            return Math.min( obj, params.max_cpus as int )
+        } catch (all) {
+            println "   ### ERROR ###   Max cpus '${params.max_cpus}' is not valid! Using default value: $obj"
+            return obj
+        }
+    }
+}
+
+def round_memory(obj,mode = "round") {
+    def amount = obj.toString().split(" ")[0]
+    def unit = obj.toString().split(" ")[1]
+
+    if (mode == "up"){
+        return (Math.ceil(amount.toDouble()).toInteger() + "." + unit) as nextflow.util.MemoryUnit
+    } else if (mode == "down"){
+        return (Math.floor(amount.toDouble()).toInteger() + "." + unit) as nextflow.util.MemoryUnit
+    } else {
+        return (Math.round(amount.toDouble()).toInteger() + "." + unit) as nextflow.util.MemoryUnit
+    }
+
+}
+
