@@ -2,7 +2,7 @@
 
 follows [Forte](https://github.com/mskcc/forte)
 
-## Version 2.0.1
+## Version 2.0.2
 
 - Forte: Version 0b3d927 (main-241113) v-1.0.1-pre
 
