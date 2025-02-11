@@ -24,7 +24,7 @@ for(mi in map %>% transpose) {
         cat("\n\nR1,R2 mismatch\n")
     }
 
-    SID=paste0("p",projectNo,gsub("^s_","-",mi$X2))
+    SID=paste0("p",projectNo,".",gsub("^s_","-",mi$X2))
 
     fmap[[len(fmap)+1]]=tibble(sample=SID,strand=strand,fastq_1=R1,fastq_2=R2)
 
