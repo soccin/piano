@@ -46,8 +46,16 @@ LOG=${PROJECT_ID}_runForte.log
 echo \$RDIR=$(realpath .) >$LOG
 echo \$ODIR=$ODIR >>$LOG
 
+#
+# If the script is running in a terminal, then set ANSI_LOG to true
+#
+case $(ps -o stat= -p $$) in
+  *+*) ANSI_LOG="true" ;;
+  *) ANSI_LOG="false" ;;
+esac
+
 nextflow run $ADIR/forte/ \
-    -ansi-log false -resume \
+    -ansi-log $ANSI_LOG -resume \
     -profile juno \
     -config $ADIR/conf/${CONFIG}.config \
     --genome GRCh37 \
@@ -55,7 +63,8 @@ nextflow run $ADIR/forte/ \
     --run_oncokb_fusionannotator \
     --input $INPUT \
     --outdir $ODIR \
-    >> $LOG 2> ${LOG/.log/.err}
+    2> ${LOG/.log/.err} \
+    | tee -a $LOG
 
 mkdir -p $ODIR/runlog
 
@@ -74,7 +83,7 @@ RDIR: $RDIR
 Script: $0 $*
 
 nextflow run $ADIR/forte/ \
-    -ansi-log false -resume \
+    -ansi-log $ANSI_LOG -resume \
     -profile juno \
     -config $ADIR/conf/${CONFIG}.config \
     --genome GRCh37 \
