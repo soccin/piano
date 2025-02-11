@@ -12,4 +12,11 @@ $SDIR/bin/runOncoKb.sh ${PROJNO}__UniqueFusions.tsv
 
 
 echo -e "\nPhase-II: Generate fusion report\n"
-Rscript $SDIR/R/reportMetaFusion.R
+Rscript $SDIR/R/reportFusion01.R
+
+mkdir -p post
+
+cp ${PROJNO}__FusionTableV4.xlsx post/
+cp ${PROJNO}__FusionTableV4__allEvents.csv post/
+
+
