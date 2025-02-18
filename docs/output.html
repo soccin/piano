@@ -1,0 +1,13 @@
+<h1 id="piano-rna-seq-fusion-calling-pipeline">Piano: RNA-Seq Fusion Calling Pipeline</h1>
+<h2 id="introduction">Introduction</h2>
+<p>The Piano pipeline integrates two key components for analysis. The primary component is the Forte pipeline (https://github.com/mskcc/forte), specifically version 0b3d9275. Following the Forte analysis, additional post-processing steps are performed by the Piano pipeline (https://github.com/soccin/piano).</p>
+<h2 id="output-structure">Output Structure</h2>
+<p>The pipeline generates two main output directories: <code>forte</code> and <code>post</code>. The structure is organized as follows:</p>
+<pre><code>{outdir}
+├── forte/     # Primary analysis results
+└── post/      # Post-processing results and reports</code></pre>
+<h3 id="forte-directory">Forte Directory</h3>
+<p>The <code>forte</code> directory contains all standard Forte pipeline outputs, excluding BAM files. For a comprehensive description of these files, please refer to the official Forte documentation at https://github.com/mskcc/forte/blob/main/docs/output.md</p>
+<h3 id="post-directory">Post Directory</h3>
+<p>The post-processing directory, <code>post</code>, contains the consolidated fusion analysis report in an Excel workbook named <code>{ProjectNumber}_FusionTableV4.xlsx</code>. This workbook is organized into two sheets that present the fusion analysis results at different confidence levels.</p>
+<p>The first sheet, HC.Events (High Confidence Events), contains fusion events detected by at least two of the three Forte callers. These represent the most reliable fusion predictions and are recommended for primary analysis. The second sheet, ALLEvents, provides a comprehensive list of all detected fusion events, including predictions from any single caller. This complete list is particularly useful for exploratory analysis or when investigating specific regions of interest.</p>
