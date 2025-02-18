@@ -9,6 +9,6 @@ ODIR=$1
 mkdir -p $ODIR/forte
 mkdir -p $ODIR/post
 
-rsync -avP  out/* $ODIR/forte
+rsync -avP  --exclude "STAR" --exclude="*.fastq.gz" out/* $ODIR/forte
 cp post/* $ODIR/post
 
