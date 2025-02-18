@@ -2,6 +2,12 @@
 
 follows [Forte](https://github.com/mskcc/forte)
 
+## Version 2.1.2  
+
+- Added delivery email template and script
+- Output documentation created
+
+
 ## Version 2.1.1
 
 - Add new fusion report 
