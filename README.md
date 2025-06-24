@@ -1,14 +1,10 @@
 # PIANO: RNA-Seq Fusion Calling Pipeline
 
-> *"From forte to piano, orchestrating the symphony of RNA-Seq fusion detection."*
+> *"Forte-Piano, orchestrating the symphony of RNA-Seq fusion detection."*
 
-PIANO is a convience wrapper around the [Forte](https://github.com/mskcc/forte) pipeline for RNAseq fusion calling. It also collects a set of custom post-processing scripts for enhanced fusion annotation using the [OncoKb-Annotator](https://github.com/oncokb/oncokb-annotator) and custom reporting.
+Piano is a convience wrapper around the [Forte](https://github.com/mskcc/forte) pipeline for RNAseq fusion calling. It also collects a set of custom post-processing scripts for enhanced fusion annotation using the [OncoKb-Annotator](https://github.com/oncokb/oncokb-annotator) and custom reporting.
 
-## Version
-
-**2.2.1**
-
----
+## Version: 2.2.1 (2025-06-24)
 
 ## Table of Contents
 - [Overview](#overview)
@@ -25,7 +21,7 @@ PIANO is a convience wrapper around the [Forte](https://github.com/mskcc/forte) 
 
 ## Overview
 
-PIANO orchestrates RNA-Seq fusion analysis by:
+Piano orchestrates RNA-Seq fusion analysis by:
 - Running the [Forte](https://github.com/mskcc/forte) pipeline for alignment, quantification, and fusion calling.
 - Post-processing Forte outputs with custom R and shell scripts to generate detailed fusion reports and OncoKB annotations.
 - Organizing results into structured output directories for easy delivery and review.
@@ -138,8 +134,8 @@ See [docs/output.md](docs/output.md) for more details.
 
 ## Credits and Support
 
-- PIANO was developed by Nicholas Socci (soccin@mskcc.org) and the Bioinformatics Core at MSKCC.
 - The Forte pipeline was developed by Anne Marie Noronha in the Center for Molecular Oncology at MSKCC (see forte/README.md for full credits).
+- Piano was developed by Nicholas Socci (soccin@mskcc.org) and the Bioinformatics Core at MSKCC.
 - For questions or support, please contact the authors or open an issue on GitHub.
 
 ---
