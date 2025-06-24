@@ -1,10 +1,12 @@
 # PIANO: RNA-Seq Fusion Calling Pipeline
 
-> *"Forte-Piano, orchestrating the symphony of RNA-Seq fusion detection."*
+> *"Forte-Piano, orchestrating the symphony of RNA-Seq fusion 
+detection."*
 
-Piano is a convience wrapper around the [Forte](https://github.com/mskcc/forte) pipeline for RNAseq fusion calling. It also collects a set of custom post-processing scripts for enhanced fusion annotation using the [OncoKb-Annotator](https://github.com/oncokb/oncokb-annotator) and custom reporting.
+PIANO is a convience wrapper around the [Forte](https://github.com/mskcc/forte) pipeline for RNAseq fusion calling. It also collects a set of custom post-processing scripts for enhanced fusion annotation using the [OncoKb-Annotator](https://github.com/oncokb/oncokb-annotator) and custom reporting.
 
-## Version: 2.2.1 (2025-06-24)
+## Branch *devs* (Ver: 2.2.1)
+
 
 ## Table of Contents
 - [Overview](#overview)
