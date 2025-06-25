@@ -6,9 +6,11 @@ SDIR="$( cd "$( dirname "$0" )" && pwd )"
 
 INPUT=$1
 
+source ~/.credentials/oncokb_api_bearer_token
+
 . $SDIR/../ve.oncokb/bin/activate
 python3 $SDIR/../oncokb-annotator/FusionAnnotator.py \
-    -b 0f2476ae-6157-44a8-9f36-56718dce7864 \
+    -b $ONCOKB_API_BEARER_TOKEN \
     -i $INPUT \
     -o ${INPUT/.tsv/.oncokb.tsv}
 
