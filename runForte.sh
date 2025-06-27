@@ -19,12 +19,19 @@ else
     exit 1
 fi
 
-#CONFIG=neo
-
-export NXF_SINGULARITY_CACHEDIR=/rtsess01/compute/juno/bic/ROOT/opt/singularity/cachedir_socci
 export NXF_OPTS='-Xms1g -Xmx4g'
-export TMPDIR=/scratch/socci
-export PATH=$ADIR/bin:$PATH
+export PATH=$SDIR/bin:$PATH
+export NXF_SINGULARITY_CACHEDIR=/scratch/core001/bic/socci/opt/singularity/cachedir
+mkdir -p $NXF_SINGULARITY_CACHEDIR
+
+DS=$(date +%Y%m%d_%H%M%S)
+UUID=${DS}_${RANDOM}
+#export TMPDIR=/localscratch/bic/socci/Piano/$UUID
+export TMPDIR=/scratch/core001/bic/socci/Piano/$UUID
+mkdir -p $TMPDIR
+
+WORKDIR=/scratch/core001/bic/socci/Piano/$UUID/work
+mkdir -p $WORKDIR
 
 if [ "$#" -lt "2" ]; then
     echo
@@ -45,14 +52,14 @@ INPUT=$(realpath $2)
 
 ODIR=$(pwd -P)/out/${PROJECT_ID}
 
-#
-# Need each instance to run in its own directory
-#
-TUID=$(date +"%Y%m%d_%H%M%S")_$(uuidgen | sed 's/-.*//')
-RDIR=run/$PROJECT_ID/$TUID
+# #
+# # Need each instance to run in its own directory
+# #
+# TUID=$(date +"%Y%m%d_%H%M%S")_$(uuidgen | sed 's/-.*//')
+# RDIR=run/$PROJECT_ID/$TUID
 
-mkdir -p $RDIR
-cd $RDIR
+# mkdir -p $RDIR
+# cd $RDIR
 
 LOG=${PROJECT_ID}_runForte.log
 
@@ -71,6 +78,7 @@ nextflow run $ADIR/forte/ \
     -ansi-log $ANSI_LOG -resume \
     -profile juno \
     -config $ADIR/conf/${CONFIG}.config \
+    -work-dir $WORKDIR \
     --genome GRCh37 \
     --cosmic_usr soccin@mskcc.org \
     --run_oncokb_fusionannotator \
@@ -99,6 +107,7 @@ nextflow run $ADIR/forte/ \
     -ansi-log $ANSI_LOG -resume \
     -profile juno \
     -config $ADIR/conf/${CONFIG}.config \
+    -work-dir $WORKDIR \
     --genome GRCh37 \
     --cosmic_usr soccin@mskcc.org \
     --run_oncokb_fusionannotator \
