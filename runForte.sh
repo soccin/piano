@@ -6,7 +6,20 @@ OPWD=$PWD
 SDIR="$( cd "$( dirname "$0" )" && pwd )"
 ADIR=$(realpath $SDIR)
 
-CONFIG=neo
+#
+# Get the first two octets of the local network (10.x) of the machine
+#
+IP=$(hostname -I | tr ' ' '\n' | grep '^10\.' | head -n1 | cut -d. -f1-2)
+if [ "$IP" == "10.0" ]; then
+    CONFIG=neo
+elif [ "$IP" == "10.247" ]; then
+    CONFIG=iris
+else
+    echo "Unknown Network IP: $IP"
+    exit 1
+fi
+
+#CONFIG=neo
 
 export NXF_SINGULARITY_CACHEDIR=/rtsess01/compute/juno/bic/ROOT/opt/singularity/cachedir_socci
 export NXF_OPTS='-Xms1g -Xmx4g'
