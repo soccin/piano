@@ -5,40 +5,7 @@ set -ue
 OPWD=$PWD
 SDIR="$( cd "$( dirname "$0" )" && pwd )"
 ADIR=$(realpath $SDIR)
-
-#
-# Get the first two octets of the local network (10.x) of the machine
-#
-IP=$(hostname -I | tr ' ' '\n' | grep '^10\.' | head -n1 | cut -d. -f1-2)
-if [ "$IP" == "10.0" ]; then
-    CONFIG=neo
-elif [ "$IP" == "10.247" ]; then
-    CONFIG=iris
-else
-    echo "Unknown Network IP: $IP"
-    exit 1
-fi
-
-export NXF_OPTS='-Xms1g -Xmx4g'
 export PATH=$SDIR/bin:$PATH
-export NXF_SINGULARITY_CACHEDIR=/scratch/core001/bic/socci/opt/singularity/cachedir
-mkdir -p $NXF_SINGULARITY_CACHEDIR
-
-DS=$(date +%Y%m%d_%H%M%S)
-UUID=${DS}_${RANDOM}
-#export TMPDIR=/localscratch/bic/socci/Piano/$UUID
-export TMPDIR=/scratch/core001/bic/socci/Piano/$UUID
-mkdir -p $TMPDIR
-
-WORKDIR=/scratch/core001/bic/socci/Piano/$UUID/work
-mkdir -p $WORKDIR
-
-if [ "$#" -lt "2" ]; then
-    echo
-    echo usage: runForte.sh PROJECT_NO INPUT.csv
-    echo
-    exit
-fi
 
 if ! command -v nextflow &> /dev/null
 then
@@ -47,8 +14,46 @@ then
     exit 1
 fi
 
+if [ "$#" -lt "2" ]; then
+    echo
+    echo usage: runForte.sh PROJECT_NO INPUT.csv
+    echo
+    exit
+fi
+
 PROJECT_ID=$1
 INPUT=$(realpath $2)
+
+export NXF_OPTS='-Xms1g -Xmx4g'
+DS=$(date +%Y%m%d_%H%M%S)
+UUID=${DS}_${RANDOM}
+
+. $ADIR/bin/getClusterName.sh
+echo \$CLUSTER=$CLUSTER
+if [ "$CLUSTER" == "IRIS" ]; then
+
+    CONFIG=iris
+    export NXF_SINGULARITY_CACHEDIR=/scratch/core001/bic/socci/opt/singularity/cachedir
+    export TMPDIR=/scratch/core001/bic/socci/Piano/$UUID
+    export WORKDIR=/scratch/core001/bic/socci/Piano/$UUID/work
+
+elif [ "$CLUSTER" == "JUNO" ]; then
+
+    CONFIG=neo
+    export NXF_SINGULARITY_CACHEDIR=/rtsess01/compute/juno/bic/ROOT/opt/singularity/cachedir_socci
+    export TMPDIR=/scratch/socci
+    export WORKDIR=work/$UUID
+
+else
+
+    echo -e "\nUnknown cluster: $CLUSTER\n"
+    exit 1
+
+fi
+
+mkdir -p $TMPDIR
+mkdir -p $NXF_SINGULARITY_CACHEDIR
+mkdir -p $WORKDIR
 
 ODIR=$(pwd -P)/out/${PROJECT_ID}
 
@@ -63,7 +68,7 @@ ODIR=$(pwd -P)/out/${PROJECT_ID}
 
 LOG=${PROJECT_ID}_runForte.log
 
-echo \$RDIR=$(realpath .) >$LOG
+echo \$WORKDIR=$(realpath $WORKDIR) >$LOG
 echo \$ODIR=$ODIR >>$LOG
 
 #
@@ -98,9 +103,11 @@ cat <<-END_VERSION > $ODIR/runlog/cmd.sh.log
 ADIR: $ADIR
 GURL: $GURL
 GTAG: $GTAG
+CLUSTER: $CLUSTER
 PWD: $OPWD
 WORKDIR: $WORKDIR
 ODIR: $ODIR
+CONFIG: $CONFIG
 
 Script: $0 $*
 
