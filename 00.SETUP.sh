@@ -11,6 +11,11 @@ curl -s https://get.nextflow.io | bash
 cd ..
 
 #
+# Need to install iris.config in forte/conf
+#
+#
+cp conf/iris.config forte/conf/iris.config
+
 # No longer cloning
 # Pulling in a specific release and tracking
 # it inside our repo
