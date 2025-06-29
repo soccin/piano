@@ -1,0 +1,43 @@
+//
+// Just a stub file for now, placeholders
+//
+
+//
+// Exactly the same has forte/conf/juno.config
+//
+executor {
+    name = "slurm"
+    queueSize = 500
+    perJobMemLimit = true
+    perTaskReserve = true  
+}
+
+//
+// Reset the genomes to directories we can write into
+//
+// Original Juno locations
+//   /juno/work/ccs/cmopipeline/
+//   /juno/work/tempo/cmopipeline/mskcc-igenomes/
+
+params {
+    reference_base = "/data1/core001/rsrc/apps/forte"
+    igenomes_base  = '/data1/core001/rsrc/genomic/mskcc-igenomes/igenomes'
+    targets_base   = '/data1/core001/rsrc/apps/forte'
+}
+
+//
+// Need to set partition explicitly
+//
+process {
+  clusterOptions = "--partition test01"
+  //beforeScript   = "catch_term () { echo 'caught USR2/TERM signal'; set +e; false; on_exit ; } ; trap catch_term USR2 TERM"
+  beforeScript   = ""
+}  
+
+
+singularity {
+    // enabled    = true
+    // runOptions = "-B $TMPDIR"
+    // autoMounts = true
+    cacheDir   = "/scratch/core001/bic/socci/opt/singularity/cachedir/"
+}
