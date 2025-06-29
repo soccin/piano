@@ -39,6 +39,11 @@ if [ "$CLUSTER" == "IRIS" ]; then
 
 elif [ "$CLUSTER" == "JUNO" ]; then
 
+    echo -e "\nNOT IMPLEMENTED\n"
+    echo -e "  Need to fix config stuff for juno on this branch"
+    echo -e "  This branch does not have a local config (-c)\n"
+    exit 1
+
     CONFIG=neo
     export NXF_SINGULARITY_CACHEDIR=/rtsess01/compute/juno/bic/ROOT/opt/singularity/cachedir_socci
     export TMPDIR=/scratch/socci
@@ -81,8 +86,7 @@ esac
 
 nextflow run $ADIR/forte/ \
     -ansi-log $ANSI_LOG -resume \
-    -profile juno \
-    -config $ADIR/conf/${CONFIG}.config \
+    -profile $CONFIG \
     -work-dir $WORKDIR \
     --genome GRCh37 \
     --cosmic_usr soccin@mskcc.org \
@@ -113,8 +117,7 @@ Script: $0 $*
 
 nextflow run $ADIR/forte/ \
     -ansi-log $ANSI_LOG -resume \
-    -profile juno \
-    -config $ADIR/conf/${CONFIG}.config \
+    -profile $CONFIG \
     -work-dir $WORKDIR \
     --genome GRCh37 \
     --cosmic_usr soccin@mskcc.org \
