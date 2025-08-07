@@ -32,12 +32,17 @@ UUID=${DS}_${RANDOM}
 echo \$CLUSTER=$CLUSTER
 if [ "$CLUSTER" == "IRIS" ]; then
 
-    CONFIG=iris
+    CONFIG=eos
     export NXF_SINGULARITY_CACHEDIR=/scratch/core001/bic/socci/opt/singularity/cachedir
     export TMPDIR=/scratch/core001/bic/socci/Piano/$UUID
     export WORKDIR=/scratch/core001/bic/socci/Piano/$UUID/work
 
 elif [ "$CLUSTER" == "JUNO" ]; then
+
+    echo -e "\nNOT IMPLEMENTED\n"
+    echo -e "  Need to fix config stuff for juno on this branch"
+    echo -e "  This branch does not have a local config (-c)\n"
+    exit 1
 
     CONFIG=neo
     export NXF_SINGULARITY_CACHEDIR=/rtsess01/compute/juno/bic/ROOT/opt/singularity/cachedir_socci
@@ -79,14 +84,13 @@ case $(ps -o stat= -p $$) in
   *) ANSI_LOG="false" ;;
 esac
 
+ANSI_LOG=false
+
 nextflow run $ADIR/forte/ \
     -ansi-log $ANSI_LOG -resume \
-    -profile juno \
-    -config $ADIR/conf/${CONFIG}.config \
+    -profile $CONFIG \
     -work-dir $WORKDIR \
     --genome GRCh37 \
-    --cosmic_usr soccin@mskcc.org \
-    --run_oncokb_fusionannotator \
     --input $INPUT \
     --outdir $ODIR \
     2> ${LOG/.log/.err} \
@@ -113,12 +117,9 @@ Script: $0 $*
 
 nextflow run $ADIR/forte/ \
     -ansi-log $ANSI_LOG -resume \
-    -profile juno \
-    -config $ADIR/conf/${CONFIG}.config \
+    -profile $CONFIG \
     -work-dir $WORKDIR \
     --genome GRCh37 \
-    --cosmic_usr soccin@mskcc.org \
-    --run_oncokb_fusionannotator \
     --input $INPUT \
     --outdir $ODIR
 
