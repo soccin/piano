@@ -1,0 +1,13 @@
+{
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "editor.detectIndentation": false,
+  "[r]": {
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true
+  },
+  "[rmd]": {
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true
+  }
+} 
