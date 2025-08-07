@@ -59,7 +59,8 @@ clean_cff<-function(cff) {
         select(-score) |>
         select(-Metafusion_flag) |>
         select(-coding_id_distance,-gene_interval_distance,-cluster) %>%
-        select(sample,Fusion,everything())
+        select(sample,Fusion,everything()) |>
+        mutate(sample=gsub("_IGO_.*","",sample))
 
 
 }

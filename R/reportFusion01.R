@@ -101,9 +101,15 @@ tbl1.f1=tbl1 %>% filter(nCallers>1)
 
 if(length(unique(tbl1$Sample))>1) {
 
-    cat("Multiple samples found\n")
+    cat("\n\nMultiple samples found\n")
     cat("Need to implement multi-sample report\n")
-    rlang::abort("Multiple samples found")
+    cat("For now using same as single sample\n\n")
+
+    ffile=cc(projNo,"_FusionTableV4.xlsx")
+    tbl=list(HC.Events=tbl1.f1,AllEvents=tbl1)
+    openxlsx::write.xlsx(tbl,ffile)
+    write_csv(tbl1,cc(projNo,"_FusionTableV4__allEvents.csv"))
+
 
 } else {
 
