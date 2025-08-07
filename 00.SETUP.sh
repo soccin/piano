@@ -20,6 +20,7 @@ git apply ../patches/01-forte-3071d5b-250807
 git add .
 git commit -m "applied patch 01-forte-3071d5b-250807"
 cd ..
+git commit -m "module: applied patch 01-forte-3071d5b-250807" forte
 
 # No longer cloning
 # Pulling in a specific release and tracking
