@@ -11,6 +11,16 @@ curl -s https://get.nextflow.io | bash
 cd ..
 
 #
+# Need to install eos.config in forte/conf
+# and update nextflow.config to use it
+#
+cp conf/eos.config forte/conf/eos.config
+cd forte
+git apply ../patches/01-forte-3071d5b-250807
+git add .
+git commit -m "applied patch 01-forte-3071d5b-250807"
+cd ..
+
 # No longer cloning
 # Pulling in a specific release and tracking
 # it inside our repo

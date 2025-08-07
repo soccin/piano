@@ -1,0 +1,49 @@
+diff --git a/README_NDS.md b/README_NDS.md
+new file mode 100644
+index 0000000..c9bf49e
+--- /dev/null
++++ b/README_NDS.md
+@@ -0,0 +1,21 @@
++# Private Mods to Forte
++
++This is the privately modified version of `Forte` for use in the `Piano` pipeline.
++
++## Version Info
++
++- DATE: 2025-08-07
++- HEAD: 3071d5b
++- VERSION: 1.0.0-411-g3071d5b
++
++## 2025-08-07
++
++### Added
++- **IRIS Cluster Support**: Added new EOS configuration file (`eos.config`) for the IRIS cluster
++  - Added new `eos` profile in `nextflow.config`
++  - Configured executor settings, process resource limits, and parameters
++  - Set up paths, environment variables and singularity options for the `IRIS` cluster
++
++### Changed
++- **Publish Mode**: Updated `nextflow.config` to change `publish_dir_mode` from 'link' to 'copy'
++  - This is needed on IRIS as the work and output directories are on different mount points (`/scratch` vs `/data1`)
+\ No newline at end of file
+diff --git a/nextflow.config b/nextflow.config
+index 1c2b4e4..e403f28 100644
+--- a/nextflow.config
++++ b/nextflow.config
+@@ -55,7 +55,7 @@ params {
+ 
+     // Boilerplate options
+     outdir                       = null
+-    publish_dir_mode             = 'link'
++    publish_dir_mode             = 'copy'
+     email                        = null
+     email_on_fail                = null
+     plaintext_email              = false
+@@ -191,6 +191,7 @@ profiles {
+     test      { includeConfig 'conf/test.config'      }
+     test_full { includeConfig 'conf/test_full.config' }
+     juno      { includeConfig 'conf/juno.config' }
++    eos       { includeConfig 'conf/eos.config' }
+ }
+ 
+ // Load nf-core custom profiles from different Institutions
