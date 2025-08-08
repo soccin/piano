@@ -11,9 +11,17 @@ curl -s https://get.nextflow.io | bash
 cd ..
 
 #
+# Get off the master branch
+#
+
+DS=$(date +%y%m%d)
+git switch -c local/$DS
+
+#
 # Need to install eos.config in forte/conf
 # and update nextflow.config to use it
 #
+
 cp conf/eos.config forte/conf/eos.config
 cd forte
 git apply ../patches/01-forte-3071d5b-250807
