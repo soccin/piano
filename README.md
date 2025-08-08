@@ -5,9 +5,9 @@ detection."*
 
 PIANO is a convience wrapper around the [Forte](https://github.com/mskcc/forte) pipeline for RNAseq fusion calling. It also collects a set of custom post-processing scripts for enhanced fusion annotation using the [OncoKb-Annotator](https://github.com/oncokb/oncokb-annotator) and custom reporting.
 
-## Branch *devs-eos* (Ver: 2.2.1)
+## Branch *master* (Ver: 2.3.0)
 
-Development branch to try to get things working on IRIS. Eos is my code name for the new iris cluster. Will use this going forward to help prevent any file name or config name collisions with future developments on forte.
+Current working version for IRIS cluster. 
 
 ## Table of Contents
 - [Overview](#overview)
