@@ -1,8 +1,8 @@
 # Version Information
 
 ## piano
-- Version: 2.3.0
-- Latest Tag: 2.3.0 [2025-08-07]
+- Version: 2.3.1
+- Latest Tag: 2.3.1 [2025-08-08]
 
 ## Submodule: forte
 - Repo: https://github.com/mskcc/forte.git

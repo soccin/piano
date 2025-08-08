@@ -1,5 +1,18 @@
 # Changelog
 
+## Version 2.3.1
+
+### Bug Fixes
+- Fixed project number extraction in R scripts and runPost.sh to correctly retrieve the last project number from the current working directory
+
+### Features
+- Enhanced 00.SETUP.sh script to create local branch and copy eos.config based on current date
+- Added fastqDirToBICMap.R script for creating mapping files from fastq sample directories
+
+### Scripts
+- Updated getPreAnnotationFile.R, reportFusion01.R, and reportKEJFusion.R with corrected project number extraction logic
+- Modified runPost.sh to use proper project number extraction method
+
 ## Version 2.3.0
 
 ### Features
