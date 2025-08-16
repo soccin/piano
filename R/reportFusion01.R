@@ -89,14 +89,16 @@ fusionAnnote=cff1 %>% distinct(Fusion,FusionType,Fusion_effect)
 tbl1=cff1 %>%
     select(
         Sample=sample,Fusion,Junction=FusionTag,max_split_cnt,max_span_cnt,
-        FusionType,Fusion_effect,Tools,nCallers) %>%
+        FusionType,Fusion_effect,Tools,nCallers,
+        matches("exon|_seq")
+      ) %>%
     arrange(Sample,Fusion,Junction) %>%
     left_join(oncokb) %>%
     arrange(desc(nCallers),desc(max_split_cnt))
 
 tbl1on=tbl1 %>% filter(!is.na( HIGHEST_LEVEL)) %>% arrange(desc(max_split_cnt))
 
-tbl1.f1=tbl1 %>% filter(nCallers>1)
+tbl1.f1=tbl1 %>% type_convert %>% filter(nCallers>1 & max_split_cnt+max_span_cnt>=5)
 
 
 if(length(unique(tbl1$Sample))>1) {
@@ -105,18 +107,18 @@ if(length(unique(tbl1$Sample))>1) {
     cat("Need to implement multi-sample report\n")
     cat("For now using same as single sample\n\n")
 
-    ffile=cc(projNo,"_FusionTableV4.xlsx")
+    ffile=cc(projNo,"_FusionTableV5.xlsx")
     tbl=list(HC.Events=tbl1.f1,AllEvents=tbl1)
     openxlsx::write.xlsx(tbl,ffile)
-    write_csv(tbl1,cc(projNo,"_FusionTableV4__allEvents.csv"))
+    write_csv(tbl1,cc(projNo,"_FusionTableV5__allEvents.csv"))
 
 
 } else {
 
-    ffile=cc(projNo,"_FusionTableV4.xlsx")
+    ffile=cc(projNo,"_FusionTableV5.xlsx")
     tbl=list(HC.Events=tbl1.f1,AllEvents=tbl1)
     openxlsx::write.xlsx(tbl,ffile)
-    write_csv(tbl1,cc(projNo,"_FusionTableV4__allEvents.csv"))
+    write_csv(tbl1,cc(projNo,"_FusionTableV5__allEvents.csv"))
 
 }
 
