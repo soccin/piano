@@ -16,7 +16,7 @@ Rscript $SDIR/R/reportFusion01.R
 
 mkdir -p post
 
-cp ${PROJNO}__FusionTableV4.xlsx post/
-cp ${PROJNO}__FusionTableV4__allEvents.csv post/
+cp ${PROJNO}__FusionTableV?.xlsx post/
+cp ${PROJNO}__FusionTableV?__allEvents.csv post/
 
 
