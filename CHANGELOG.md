@@ -1,5 +1,29 @@
 # Changelog
 
+## Version 2.3.3
+
+### Features
+- Enable forte pipeline execution on JUNO cluster with proper configuration
+- Update reportFusion01.R to version 5 output with additional columns for matching exon and sequence patterns
+- Enhanced filtering criteria for fusion tables requiring minimum combined split and span counts
+
+### Bug Fixes
+- Use wildcard pattern for fusion table version numbers instead of hardcoded versions in runPost.sh
+
+### Configuration
+- Update eos.config for production cluster with direct scratch directory and new partition settings
+- Update iris.config for new executor (SLURM) and resource settings
+- Copy iris.config to forte/conf for proper configuration setup
+- Switch to -profile config approach for IRIS branch
+
+### Documentation
+- Update README to reflect new development branch for IRIS
+
+### Maintenance
+- Remove obsolete iris.config backup file
+- Remove obsolete forte nextflow config patch
+- Apply additional patch in forte folder for setup completion
+
 ## Version 2.3.1
 
 ### Bug Fixes
