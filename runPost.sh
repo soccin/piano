@@ -4,7 +4,7 @@ set -ue
 
 export SDIR="$( cd "$( dirname "$0" )" && pwd )"
 
-PROJNO=$(echo $(pwd -P) | tr '/' '\n' | fgrep Proj_)
+PROJNO=$(echo $(pwd -P) | tr '/' '\n' | fgrep Proj_ | tail -1)
 
 echo -e "\nPhase-I: Get OncoKb Annotations\n"
 Rscript $SDIR/R/getPreAnnotationFile.R
@@ -16,7 +16,7 @@ Rscript $SDIR/R/reportFusion01.R
 
 mkdir -p post
 
-cp ${PROJNO}__FusionTableV4.xlsx post/
-cp ${PROJNO}__FusionTableV4__allEvents.csv post/
+cp ${PROJNO}__FusionTableV?.xlsx post/
+cp ${PROJNO}__FusionTableV?__allEvents.csv post/
 
 

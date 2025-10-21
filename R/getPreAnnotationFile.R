@@ -4,7 +4,7 @@ source(file.path(SDIR,"R/read_cff.R"))
 require(tidyverse)
 
 
-projNo=grep("Proj_",strsplit(getwd(),"/")[[1]],value=T)
+projNo=grep("Proj_",strsplit(getwd(),"/")[[1]],value=T)%>%tail(1)
 
 INDIR="out"
 cffFiles=fs::dir_ls(INDIR,recur=3,regex="analysis/.*/metafusion") %>%
