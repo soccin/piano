@@ -1,7 +1,7 @@
 SDIR=Sys.getenv("SDIR")
 source(file.path(SDIR,"R/read_cff.R"))
 
-require(tidyverse)
+suppressPackageStartupMessages(require(tidyverse))
 
 
 projNo=grep("Proj_",strsplit(getwd(),"/")[[1]],value=T)%>%tail(1)
