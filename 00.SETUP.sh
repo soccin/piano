@@ -42,11 +42,21 @@ tar xvfz v3.4.1.tar.gz
 mv oncokb-annotator-3.4.1 oncokb-annotator
 rm v3.4.1.tar.gz
 
+#
+# user/no-user
+# Venv's need no-user (ie local to venv)
+# user --no-user or do
+# ```
+# echo "[install] > ve.oncokb/pip.conf
+# user = false" >> ve.oncokb/pip.conf
+# ```
+#
+
 python3 -m venv ve.oncokb
 . ve.oncokb/bin/activate
-pip install --upgrade pip
+pip install --no-user --upgrade pip
 cd oncokb-annotator/
-pip install -r requirements/common.txt -r requirements/pip3.txt
+pip install --no-user -r requirements/common.txt -r requirements/pip3.txt
 cd ..
 deactivate
 
