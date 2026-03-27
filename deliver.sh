@@ -19,7 +19,7 @@ PROJNO=$(ls -d out/* | cut -d/ -f2)
 echo $PROJNO
 SAMPLES=$(cat out/*/runlog/*_forte_input.csv | fgrep -v sample, | cut -f1 -d, | sort -V | uniq | paste -sd ',')
 
-
+$SDIR/bin/makeDelivery.sh $PROJNO $SAMPLES
 
 # echo
 # echo

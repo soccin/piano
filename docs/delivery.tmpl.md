@@ -1,4 +1,4 @@
-RNA-Seq Fusion Calling Results: Proj_{{PROJ_NO}}
+Subject: RNA-Seq Fusion Calling Results
 
 We have completed RNA-Seq fusion calling analysis for project {{PROJ_NO}} using the Piano pipeline (v2.3.3), which integrates three independent fusion callers (Arriba, FusionCatcher, and STAR-Fusion) and annotates results against the OncoKB knowledge base.
 
@@ -23,3 +23,8 @@ AllEvents — The complete set of all fusion events detected by any caller, incl
 Both sheets include OncoKB annotations indicating oncogenicity, mutation effect, and actionability levels (therapeutic, diagnostic, and prognostic).
 
 Full details on the output format and column descriptions are in docs/output.md.
+
+Nicholas Socci
+Bioinformatics Core
+MSKCC
+soccin@mskcc.org
