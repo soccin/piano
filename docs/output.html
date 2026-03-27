@@ -1,13 +1,240 @@
-<h1 id="piano-rna-seq-fusion-calling-pipeline">Piano: RNA-Seq Fusion Calling Pipeline</h1>
+<h1 id="piano-rna-seq-fusion-calling-pipeline-output">Piano: RNA-Seq
+Fusion Calling Pipeline Output</h1>
 <h2 id="introduction">Introduction</h2>
-<p>The Piano pipeline integrates two key components for analysis. The primary component is the Forte pipeline (https://github.com/mskcc/forte), specifically version 0b3d9275. Following the Forte analysis, additional post-processing steps are performed by the Piano pipeline (https://github.com/soccin/piano).</p>
+<p>The Piano pipeline (v2.3.3) is a wrapper around the <a
+href="https://github.com/mskcc/forte">Forte</a> pipeline (v1.0.0, commit
+<code>0b3d927</code>) for RNA-Seq fusion calling. It runs three
+independent fusion callers, merges and filters their predictions,
+annotates results against the <a
+href="https://www.oncokb.org/">OncoKB</a> knowledge base, and produces a
+consolidated report.</p>
+<p>The working version of Forte used here includes patch
+<code>01-forte-3071d5b-250807</code> (commit <code>20d39a1</code>),
+which applies the upstream bugfix for per-core memory allocation (forte
+PR #162, <code>bugfix/percore_mem_alloc</code>).</p>
 <h2 id="output-structure">Output Structure</h2>
-<p>The pipeline generates two main output directories: <code>forte</code> and <code>post</code>. The structure is organized as follows:</p>
-<pre><code>{outdir}
-├── forte/     # Primary analysis results
-└── post/      # Post-processing results and reports</code></pre>
-<h3 id="forte-directory">Forte Directory</h3>
-<p>The <code>forte</code> directory contains all standard Forte pipeline outputs, excluding BAM files. For a comprehensive description of these files, please refer to the official Forte documentation at https://github.com/mskcc/forte/blob/main/docs/output.md</p>
-<h3 id="post-directory">Post Directory</h3>
-<p>The post-processing directory, <code>post</code>, contains the consolidated fusion analysis report in an Excel workbook named <code>{ProjectNumber}_FusionTableV4.xlsx</code>. This workbook is organized into two sheets that present the fusion analysis results at different confidence levels.</p>
-<p>The first sheet, HC.Events (High Confidence Events), contains fusion events detected by at least two of the three Forte callers. These represent the most reliable fusion predictions and are recommended for primary analysis. The second sheet, ALLEvents, provides a comprehensive list of all detected fusion events, including predictions from any single caller. This complete list is particularly useful for exploratory analysis or when investigating specific regions of interest.</p>
+<p>The pipeline generates two main output directories:</p>
+<pre><code>{outdir}/
+├── forte/          # Primary analysis results (per-sample and batch)
+└── post/           # Post-processing results and final reports</code></pre>
+<h2 id="forte-directory">Forte Directory</h2>
+<p>The <code>forte/</code> directory (located under
+<code>out/{ProjectID}/</code>) contains all standard Forte pipeline
+outputs excluding BAM files. It is organized by sample:</p>
+<pre><code>forte/
+├── analysis/
+│   └── {SampleID}/
+│       ├── arriba/           # Arriba fusion calls and visualizations
+│       ├── fusioncatcher/    # FusionCatcher fusion calls
+│       ├── starfusion/       # STAR-Fusion fusion calls
+│       ├── metafusion/       # Merged/consolidated CFF files
+│       ├── agfusion/         # Fusion protein domain visualizations
+│       ├── agfusion_clinical/# Visualizations for clinically relevant fusions
+│       └── multiqc/          # Per-sample QC report
+├── multiqc/                  # Batch-level QC report
+├── pipeline_info/            # Nextflow execution metadata
+└── runlog/                   # Input files and execution log</code></pre>
+<p>For a full description of the Forte outputs, refer to the <a
+href="https://github.com/mskcc/forte/blob/main/docs/output.md">Forte
+output documentation</a>.</p>
+<h2 id="post-directory">Post Directory</h2>
+<p>The <code>post/</code> directory contains the consolidated fusion
+analysis report produced by Piano’s post-processing scripts
+(<code>runPost.sh</code>). Post-processing performs two steps:</p>
+<ol type="1">
+<li><strong>OncoKB annotation</strong> — unique gene-pair fusions are
+submitted to the OncoKB annotator (<code>FusionAnnotator.py</code>) to
+retrieve oncogenicity, mutation effect, and actionability levels.</li>
+<li><strong>Report generation</strong> — the R script
+<code>reportFusion01.R</code> reads the per-sample MetaFusion output
+(<code>.final.cff</code> files), merges OncoKB annotations, applies
+quality filters, and writes the final Excel and CSV reports.</li>
+</ol>
+<h3 id="delivered-files">Delivered Files</h3>
+<table>
+<colgroup>
+<col style="width: 54%" />
+<col style="width: 45%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;">File</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td
+style="text-align: left;"><code>{ProjectNo}__FusionTableV5.xlsx</code></td>
+<td style="text-align: left;">Main fusion report workbook (two
+sheets)</td>
+</tr>
+<tr>
+<td
+style="text-align: left;"><code>{ProjectNo}__FusionTableV5__allEvents.csv</code></td>
+<td style="text-align: left;">All detected fusion events (CSV)</td>
+</tr>
+</tbody>
+</table>
+<p>An additional QC plot is generated in the working directory:</p>
+<table>
+<colgroup>
+<col style="width: 29%" />
+<col style="width: 70%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;">File</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>qcCallerOverlap.pdf</code></td>
+<td style="text-align: left;">UpSet plot showing overlap among the three
+fusion callers</td>
+</tr>
+</tbody>
+</table>
+<h2 id="fusiontable-excel-workbook">FusionTable Excel Workbook</h2>
+<p>The workbook <code>{ProjectNo}__FusionTableV5.xlsx</code> contains
+two sheets.</p>
+<h3 id="hc.events-high-confidence-events">HC.Events (High Confidence
+Events)</h3>
+<p>Fusion events that pass both of the following filters:</p>
+<ul>
+<li>Detected by <strong>at least 2</strong> of the 3 callers
+(<code>nCallers &gt;= 2</code>)</li>
+<li>Combined read support:
+<code>max_split_cnt + max_span_cnt &gt;= 5</code></li>
+</ul>
+<p>These represent the most reliable fusion predictions and are the
+recommended starting point for analysis.</p>
+<h3 id="allevents">AllEvents</h3>
+<p>The complete set of all detected fusion events, including
+single-caller predictions. This is the full unfiltered table and is
+useful for exploratory analysis or when investigating fusions in
+specific genes of interest. This sheet is also exported as the CSV file
+<code>{ProjectNo}__FusionTableV5__allEvents.csv</code>.</p>
+<h2 id="column-descriptions">Column Descriptions</h2>
+<table>
+<colgroup>
+<col style="width: 38%" />
+<col style="width: 61%" />
+</colgroup>
+<thead>
+<tr>
+<th>Column</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Sample</code></td>
+<td>Sample identifier</td>
+</tr>
+<tr>
+<td><code>Fusion</code></td>
+<td>Fusion gene pair in the form <code>Gene5--Gene3</code></td>
+</tr>
+<tr>
+<td><code>Junction</code></td>
+<td>Genomic breakpoint coordinates (<code>chr:pos:strand</code>) for
+both partners</td>
+</tr>
+<tr>
+<td><code>max_split_cnt</code></td>
+<td>Maximum split-read count supporting the junction across callers</td>
+</tr>
+<tr>
+<td><code>max_span_cnt</code></td>
+<td>Maximum spanning-read count supporting the junction across
+callers</td>
+</tr>
+<tr>
+<td><code>FusionType</code></td>
+<td>Structural class of the fusion (e.g., <code>INTERCHROMOSOMAL</code>,
+<code>INTRACHROMOSOMAL</code>, <code>READ_THROUGH</code>)</td>
+</tr>
+<tr>
+<td><code>Fusion_effect</code></td>
+<td>Predicted effect on the reading frame (e.g., <code>in-frame</code>,
+<code>out-of-frame</code>, <code>frameshift</code>)</td>
+</tr>
+<tr>
+<td><code>Tools</code></td>
+<td>Semicolon-delimited list of callers that detected this event</td>
+</tr>
+<tr>
+<td><code>nCallers</code></td>
+<td>Number of callers that detected this event (1, 2, or 3)</td>
+</tr>
+<tr>
+<td><code>gene5_seq</code></td>
+<td>Junction sequence from the 5’ gene partner</td>
+</tr>
+<tr>
+<td><code>gene3_seq</code></td>
+<td>Junction sequence from the 3’ gene partner</td>
+</tr>
+<tr>
+<td><code>closest_exon5</code></td>
+<td>Nearest exon boundary for the 5’ gene partner</td>
+</tr>
+<tr>
+<td><code>closest_exon3</code></td>
+<td>Nearest exon boundary for the 3’ gene partner</td>
+</tr>
+<tr>
+<td><code>MUTATION_EFFECT</code></td>
+<td>OncoKB mutation effect classification (e.g.,
+<code>Gain-of-function</code>, <code>Loss-of-function</code>)</td>
+</tr>
+<tr>
+<td><code>ONCOGENIC</code></td>
+<td>OncoKB oncogenicity classification (e.g., <code>Oncogenic</code>,
+<code>Likely Oncogenic</code>, <code>Unknown</code>)</td>
+</tr>
+<tr>
+<td><code>HIGHEST_LEVEL</code></td>
+<td>Highest OncoKB therapeutic actionability level (Levels 1-4,
+R1-R2)</td>
+</tr>
+<tr>
+<td><code>HIGHEST_SENSITIVE_LEVEL</code></td>
+<td>Highest level of sensitivity to a therapeutic agent</td>
+</tr>
+<tr>
+<td><code>HIGHEST_RESISTANCE_LEVEL</code></td>
+<td>Highest level of resistance to a therapeutic agent</td>
+</tr>
+<tr>
+<td><code>HIGHEST_DX_LEVEL</code></td>
+<td>Highest OncoKB diagnostic actionability level (Dx1-Dx3)</td>
+</tr>
+<tr>
+<td><code>HIGHEST_PX_LEVEL</code></td>
+<td>Highest OncoKB prognostic actionability level (Px1-Px3)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="oncokb-actionability-levels">OncoKB Actionability Levels</h3>
+<p>OncoKB levels reflect the strength of clinical evidence supporting
+the annotation:</p>
+<ul>
+<li><strong>Level 1</strong>: FDA-recognized biomarker predictive of
+response to an FDA-approved drug</li>
+<li><strong>Level 2</strong>: Standard care biomarker recommended by
+professional guidelines</li>
+<li><strong>Level 3A/3B</strong>: Clinical evidence from trials or other
+tumor types</li>
+<li><strong>Level 4</strong>: Compelling biological evidence</li>
+<li><strong>R1/R2</strong>: Standard care or investigational resistance
+biomarker</li>
+<li><strong>Dx1-Dx3</strong>: Diagnostic levels (1 =
+FDA/guideline-approved)</li>
+<li><strong>Px1-Px3</strong>: Prognostic levels (1 =
+FDA/guideline-approved)</li>
+</ul>
+<p>Empty cells in OncoKB columns indicate no annotation is available in
+the current OncoKB database for that gene pair.</p>
