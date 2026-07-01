@@ -68,6 +68,16 @@ For details on the underlying methods, see [docs/method.md](docs/method.md).
 ## Quick Start
 
 1. **Prepare your input CSV file.**
+   The CSV needs the columns `sample,strand,fastq_1,fastq_2`. Generate it from
+   your fastq sample directories in two steps:
+   ```bash
+   # 1. Build a sample-mapping file from the fastq dirs -> <Proj>_sample_mapping.txt
+   ./fastqDirToBICMap.R /path/to/Sample_A_IGO_xxx /path/to/Sample_B_IGO_xxx ...
+
+   # 2. Convert it to the Forte input CSV -> <Proj>_forte_input.csv
+   #    strand is one of: yes | no | reverse
+   ./makeForteManifest.R reverse <Proj>_sample_mapping.txt
+   ```
 2. **Run the Forte pipeline:**
    ```bash
    ./runForte.sh <PROJECT_NO> <INPUT.csv>
