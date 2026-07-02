@@ -3,7 +3,7 @@
 #SBATCH -o SLM/piano.%j.out
 #SBATCH -c 4
 #SBATCH -t 7-00:00:00
-#SBATCH --partition cmobic_cpu,cmobic_pipeline
+#SBATCH --partition cmobic_cpu,bic_devs
 
 # bsub -o LSF/ -J CTRL-17495_D -W 3-00:00:00 -n 4
 
