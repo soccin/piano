@@ -91,8 +91,15 @@ For details on the underlying methods, see [docs/method.md](docs/method.md).
 4. **Deliver results:**
    ```bash
    ./deliver.sh /path/to/delivery/folder/r_00x
+   ./deliver.sh -d
    ```
-   - Copies results to the specified delivery folder.
+   - Copies results to the delivery folder as the service account
+     `svc_core001_bot01` (via `dzdo`).
+   - `-d|--default` derives the folder from the working directory:
+     `.../Users/Aa/BBB/Proj_nnnnn/...` becomes
+     `/data1/core002/res/bic/results/aa/bbb/Proj_nnnnn`.
+   - If the path does not end in `r_NNN`, the next free `r_NNN` is used
+     (`r_001` if none exist).
 
 ---
 
