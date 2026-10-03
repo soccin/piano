@@ -40,10 +40,18 @@ delivery step:
      and `AllEvents`) plus `${PROJNO}__FusionTableV5__allEvents.csv`, then copies
      them into `post/`.
 
-3. **`deliver.sh /path/to/delivery/folder/r_00x`** — rsyncs `out/*` (excluding
-   `STAR/` and fastqs) to `<dest>/forte/`, copies `post/*` to `<dest>/post/`, and
-   generates a `delivery.<PROJNO>.md` from `docs/delivery.tmpl.md` via
-   `bin/makeDelivery.sh`.
+3. **`deliver.sh /path/to/delivery/folder[/r_00x]`** or **`deliver.sh -d`** —
+   rsyncs `out/` (excluding `STAR/` and fastqs) to `<dest>/r_NNN/forte/` and
+   `post/` to `<dest>/r_NNN/post/`, then generates a `delivery.<PROJNO>.md` from
+   `docs/delivery.tmpl.md` via `bin/makeDelivery.sh`.
+   - All writes to the delivery area run as `svc_core001_bot01` through
+     `dzdo` (the `asbot` wrapper), so the bot must be able to read `out/` and
+     `post/`.
+   - `-d` derives `<dest>` from `$PWD`: `.../Users/Aa/BBB/Proj_n/...` becomes
+     `/data1/core002/res/bic/results/aa/bbb/Proj_n`.
+   - Without a trailing `r_NNN`, the next free `r_NNN` under `<dest>` is used.
+   - The `{{VERSION}}` in the delivery doc is the release tag parsed from
+     `GTAG` in `out/*/runlog/cmd.sh.log`.
 
 Manifest helpers (for building the `INPUT.csv` Forte expects, columns
 `sample,strand,fastq_1,fastq_2`): `fastqDirToBICMap.R` turns fastq sample dirs
