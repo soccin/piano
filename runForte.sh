@@ -60,11 +60,15 @@ if [ "$CLUSTER" == "IRIS" ]; then
     export TMPDIR=/scratch/core001/bic/socci/Piano/$UUID
     export WORKDIR=/scratch/core001/bic/socci/Piano/$UUID/work
 
-    # QoS is set per task in conf/eos.config (qosFor). An inherited
-    # SBATCH_QOS would override it and get every cpushort submission
-    # rejected, so drop it here. The driver job keeps whatever QoS it
-    # was submitted with.
-    unset SBATCH_QOS
+    # QoS, partition, time, memory and cpus are set per task in
+    # conf/eos.config. sbatch lets SBATCH_* environment variables
+    # override the #SBATCH lines Nextflow writes, so an inherited
+    # SBATCH_QOS=priority would get every cpushort submission rejected
+    # and an SBATCH_PARTITION would pin every task to one queue. Drop
+    # them here. The driver job keeps whatever it was submitted with.
+    unset SBATCH_QOS SBATCH_PARTITION SBATCH_TIMELIMIT \
+          SBATCH_MEM_PER_NODE SBATCH_MEM_PER_CPU SBATCH_CPUS_PER_TASK \
+          SBATCH_CONSTRAINT SBATCH_RESERVATION SBATCH_EXCLUSIVE
 
 elif [ "$CLUSTER" == "JUNO" ]; then
 
