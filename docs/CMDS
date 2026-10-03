@@ -1,2 +1,14 @@
-pandoc --pdf-engine=xelatex -o output.pdf output.md 
+# Run from docs/: . CMDS
 
+if [ "$(uname)" = "Darwin" ]; then
+    # Mac: fonts in output.md front matter are installed
+    pandoc --pdf-engine=xelatex -o output.pdf output.md
+else
+    # IRIS: CMU Concrete, Concrete-Math, Fira Code not installed;
+    # TeX-tree math font must be given by file name
+    pandoc --pdf-engine=xelatex \
+        -V mainfont="Bitstream Charter" \
+        -V monofont="Fira Mono" \
+        -V mathfont=latinmodern-math.otf \
+        -o output.pdf output.md
+fi
