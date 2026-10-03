@@ -24,6 +24,10 @@ Both sheets include OncoKB annotations indicating oncogenicity, mutation effect,
 
 Full details on the output format and column descriptions are in output.pdf in the post folder.
 
+And you can get the full pipeline output here:
+
+https://bicdelivery.mskcc.org/project/{{PROJ_NO}}/piano/{{RUNDIR}}/project_main
+
 Nicholas Socci
 Bioinformatics Core
 MSKCC

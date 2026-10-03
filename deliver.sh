@@ -100,7 +100,7 @@ else
     echo "WARNING: cannot get version from GTAG=$GTAG; fix version in delivery doc"
 fi
 
-$SDIR/bin/makeDelivery.sh $PROJNO $SAMPLES $VERSION
+$SDIR/bin/makeDelivery.sh $PROJNO $SAMPLES $VERSION $CURRDIR
 
 # Import the project/run into bicdelivery. Genome is b37 because
 # runForte.sh is hardcoded to GRCh37; root is the folder written above.
