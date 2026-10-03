@@ -60,6 +60,12 @@ if [ "$CLUSTER" == "IRIS" ]; then
     export TMPDIR=/scratch/core001/bic/socci/Piano/$UUID
     export WORKDIR=/scratch/core001/bic/socci/Piano/$UUID/work
 
+    # QoS is set per task in conf/eos.config (qosFor). An inherited
+    # SBATCH_QOS would override it and get every cpushort submission
+    # rejected, so drop it here. The driver job keeps whatever QoS it
+    # was submitted with.
+    unset SBATCH_QOS
+
 elif [ "$CLUSTER" == "JUNO" ]; then
 
     CONFIG=juno
