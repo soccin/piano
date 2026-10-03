@@ -109,3 +109,16 @@ Nextflow profiles live in `conf/` (`eos.config` for IRIS/production,
 into `forte/conf/` to take effect (done by `00.SETUP.sh`). These set the SLURM
 executor, per-label resource limits, reference/igenomes base paths, and
 Singularity options.
+
+`eos.config` is short-queue-first. Each process has a ladder of (queue, time)
+rungs; attempt 1 takes rung 0 and only a wall-time kill of the previous
+attempt moves a retry up one rung (`tierFor`/`queueFor`/`timeFor`, which read
+`task.previousTrace`). Default ladder: `cpushort,cmobic_short` 2h with
+`--qos=normal`, then `cmobic_cpu` 24h with `--qos=priority` (`qosFor`). STAR
+has a 3h `cmobic_short` rung in between; `FUSIONCATCHER_DETECT` starts on
+`cmobic_short` at 3h. Every `withLabel` block must set `time`, otherwise
+forte's `conf/base.config` label time wins. `runForte.sh` unsets `SBATCH_QOS`
+and the other `SBATCH_*` resource variables on IRIS because the environment
+overrides per-task `#SBATCH` lines. Partition facts and the timing data behind
+the numbers are in `docs/IRIS_SLURM.md`; `R/forteTraceSummary.R` writes the
+per-process TSV the markdown table is copied from.
