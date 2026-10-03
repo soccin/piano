@@ -109,3 +109,13 @@ Nextflow profiles live in `conf/` (`eos.config` for IRIS/production,
 into `forte/conf/` to take effect (done by `00.SETUP.sh`). These set the SLURM
 executor, per-label resource limits, reference/igenomes base paths, and
 Singularity options.
+
+`eos.config` is short-queue-first: attempt 1 of every task goes to
+`cpushort,cmobic_short` at 2h with no QoS, and only a wall-time kill promotes
+it to `cmobic_cpu` with `--qos=priority` (`tierFor`/`queueFor`/`timeFor`,
+`qosFor`). `FUSIONCATCHER_DETECT` starts on `cmobic_short` at 3h. Every
+`withLabel` block must set `time`, otherwise forte's `conf/base.config` label
+time wins. `runForte.sh` runs `unset SBATCH_QOS` on IRIS because the
+environment overrides the per-task `--qos`. Partition facts and the timing
+data behind the numbers are in `docs/IRIS_SLURM.md`; regenerate the timing
+table with `R/forteTraceSummary.R`.
