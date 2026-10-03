@@ -90,7 +90,16 @@ PROJNO=$(ls -d out/* | cut -d/ -f2)
 echo $PROJNO
 SAMPLES=$(cat out/*/runlog/*_forte_input.csv | fgrep -v sample, | cut -f1 -d, | sort -V | uniq | paste -sd ',')
 
-$SDIR/bin/makeDelivery.sh $PROJNO $SAMPLES
+# Doc version is the release tag the run was built from
+GTAG=$(sed -n 's/^GTAG: //p' out/*/runlog/cmd.sh.log | head -1)
+if [[ "$GTAG" =~ ^(.+)-[0-9]+-g[0-9a-f]+(-UNCOMMITED)?$ ]]; then
+    VERSION="${BASH_REMATCH[1]}"
+else
+    VERSION="UNKNOWN"
+    echo "WARNING: cannot get version from GTAG=$GTAG; fix version in delivery doc"
+fi
+
+$SDIR/bin/makeDelivery.sh $PROJNO $SAMPLES $VERSION
 
 # echo
 # echo
