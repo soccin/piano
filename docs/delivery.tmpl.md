@@ -1,6 +1,6 @@
 Subject: RNA-Seq Fusion Calling Results
 
-We have completed RNA-Seq fusion calling analysis for project {{PROJ_NO}} using the Piano pipeline (v2.3.3), which integrates three independent fusion callers (Arriba, FusionCatcher, and STAR-Fusion) and annotates results against the OncoKB knowledge base.
+We have completed RNA-Seq fusion calling analysis for project {{PROJ_NO}} using the Piano pipeline (v{{VERSION}}), which integrates three independent fusion callers (Arriba, FusionCatcher, and STAR-Fusion) and annotates results against the OncoKB knowledge base.
 
 Samples Analyzed
 

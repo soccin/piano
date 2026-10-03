@@ -5,13 +5,14 @@ set -eu
 SDIR="$( cd "$( dirname "$0" )" && pwd )"
 
 if [ $# -lt 2 ]; then
-    echo "Usage: $(basename $0) <PROJ_NO> <SAMPLE1,SAMPLE2,...>"
-    echo "Example: $(basename $0) 17929_I CTCL_HH_CL_R,CTCL_Hut78_CL_R"
+    echo "Usage: $(basename $0) <PROJ_NO> <SAMPLE1,SAMPLE2,...> [VERSION]"
+    echo "Example: $(basename $0) 17929_I CTCL_HH_CL_R,CTCL_Hut78_CL_R 2.3.3"
     exit 1
 fi
 
 PROJ_NO=$1
 SAMPLES_CSV=$2
+VERSION=${3:-UNKNOWN}
 
 TMPL=$SDIR/../docs/delivery.tmpl.md
 OUT=$(pwd)/delivery.${PROJ_NO}.md
@@ -21,6 +22,7 @@ SAMPLE_LIST=$(echo "$SAMPLES_CSV" | tr ',' '\n' | sed 's/^/- /')
 
 sed \
     -e "s/{{PROJ_NO}}/${PROJ_NO}/g" \
+    -e "s/{{VERSION}}/${VERSION}/g" \
     -e "/{{SAMPLE_LIST}}/{
         r /dev/stdin
         d
