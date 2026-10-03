@@ -100,6 +100,9 @@ For details on the underlying methods, see [docs/method.md](docs/method.md).
      `/data1/core002/res/bic/results/aa/bbb/Proj_nnnnn`.
    - If the path does not end in `r_NNN`, the next free `r_NNN` is used
      (`r_001` if none exist).
+   - Imports the project and run into bicdelivery. PI and investigator
+     come from the request `README.md` (or `README.txt`) in the project
+     folder.
 
 ---
 

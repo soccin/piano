@@ -85,6 +85,7 @@ asbot mkdir -p "$ODIR/$CURRDIR/post"
 
 asbot rsync -avP --exclude "STAR" --exclude="*.fastq.gz" out/ "$ODIR/$CURRDIR/forte"
 asbot rsync -avP post/ "$ODIR/$CURRDIR/post"
+asbot rsync -avP "$SDIR/docs/output.pdf" "$ODIR/$CURRDIR/post/"
 
 PROJNO=$(ls -d out/* | cut -d/ -f2)
 echo $PROJNO
@@ -100,6 +101,20 @@ else
 fi
 
 $SDIR/bin/makeDelivery.sh $PROJNO $SAMPLES $VERSION
+
+# Import the project/run into bicdelivery. Genome is b37 because
+# runForte.sh is hardcoded to GRCh37; root is the folder written above.
+BIC_DELIVERY=$HOME/Code/BIC/Delivery/Version2j
+if ! Rscript $SDIR/bin/readme2yaml.R piano $PROJNO $CURRDIR "$(realpath -s "$ODIR")" b37; then
+    echo "ERROR: cannot write project.yaml; project not imported into bicdelivery"
+    exit 1
+fi
+
+module purge
+module load python/3.8.0
+PYTHON38=$(which python3.8)
+module load py-python-ldap/3.4.2
+$PYTHON38 $BIC_DELIVERY/authorization_db/init_impact_project_permissions.py -p project.yaml
 
 # echo
 # echo

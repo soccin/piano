@@ -52,6 +52,12 @@ delivery step:
    - Without a trailing `r_NNN`, the next free `r_NNN` under `<dest>` is used.
    - The `{{VERSION}}` in the delivery doc is the release tag parsed from
      `GTAG` in `out/*/runlog/cmd.sh.log`.
+   - Last, it imports the run into bicdelivery: `bin/readme2yaml.R` writes
+     `project.yaml` (pi/invest from the emails in the request
+     `README.md`/`README.txt` in the project folder; root is the delivery
+     folder; genome `b37`; pipeline `piano`), then
+     `~/Code/BIC/Delivery/Version2j/authorization_db/init_impact_project_permissions.py`
+     loads it under the `python/3.8.0` module.
 
 Manifest helpers (for building the `INPUT.csv` Forte expects, columns
 `sample,strand,fastq_1,fastq_2`): `fastqDirToBICMap.R` turns fastq sample dirs
