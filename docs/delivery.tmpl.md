@@ -22,7 +22,7 @@ AllEvents — The complete set of all fusion events detected by any caller, incl
 
 Both sheets include OncoKB annotations indicating oncogenicity, mutation effect, and actionability levels (therapeutic, diagnostic, and prognostic).
 
-Full details on the output format and column descriptions are in docs/output.md.
+Full details on the output format and column descriptions are in output.pdf in the post folder.
 
 Nicholas Socci
 Bioinformatics Core

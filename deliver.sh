@@ -85,6 +85,7 @@ asbot mkdir -p "$ODIR/$CURRDIR/post"
 
 asbot rsync -avP --exclude "STAR" --exclude="*.fastq.gz" out/ "$ODIR/$CURRDIR/forte"
 asbot rsync -avP post/ "$ODIR/$CURRDIR/post"
+asbot rsync -avP "$SDIR/docs/output.pdf" "$ODIR/$CURRDIR/post/"
 
 PROJNO=$(ls -d out/* | cut -d/ -f2)
 echo $PROJNO
